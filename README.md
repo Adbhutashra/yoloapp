@@ -1,48 +1,52 @@
-# Getting Started
+# Restaurant Mobile App
 
-## Step 1: Start the Metro Server
+A React Native mobile application for food ordering with multiple screens and features.
 
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
+## Features
 
-To start Metro, run the following command from the _root_ of your React Native project:
+- **Login Screen**: User authentication interface
+- **OTP Verification**: Secure verification process
+- **Home Screen**: Browse restaurants and food items
+- **Restaurant Details**: View restaurant information and menu
+- **Item Details**: Detailed view of food items
+- **Cart**: Manage selected items and checkout
 
-```bash
-# using npm
+## Installation
+
+1. Clone the repository:
+
+git clone https://github.com/Adbhutashra/deliveryapp-reactnative.gi
+cd deliveryapp-reactnative
+
+2. Install dependencies (using force due to potential version conflicts):
+
+npm i --force
+
+
+## Running the Application
+
+1. Start the Metro bundler:
+
 npm start
 
-# OR using Yarn
-yarn start
-```
+2. Run on Android device/emulator:
 
-## Step 2: Start your Application
-
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
-
-### For Android
-
-```bash
-# using npm
 npm run android
 
-# OR using Yarn
-yarn android
-```
 
-### For iOS
+## Important Notes
 
-```bash
-# using npm
-npm run ios
+- Make sure you have Android Studio and necessary Android SDK installed
+- Ensure your Android device is connected or emulator is running
+- If you encounter any dependency issues, try clearing npm cache:
 
-# OR using Yarn
-yarn ios
-```
 
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
+## Development Status
 
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
+Current version includes all core features with six main screens:
+- Login
+- OTP Verification
+- Home
+- Restaurant Details
+- Item Details
+- Cart

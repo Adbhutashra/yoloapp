@@ -8,10 +8,11 @@ import {
   TextInput,
   TouchableOpacity,
   FlatList,
+  ScrollView,
 } from 'react-native';
 import { responsiveHeight } from '../utils/Normalize';
 
-const HomeScreen = () => {
+const HomeScreen = ({ navigation }) => {
   const categories = [
     {
       id: '1',
@@ -42,10 +43,18 @@ const HomeScreen = () => {
       time: '20 min',
       image: require('../../assets/Images/restaurant.jpg'),
     },
+    {
+      id: '2',
+      name: 'Dominos ',
+      categories: 'Burger Pizza',
+      rating: 4.9,
+      time: '28 min',
+      image: require('../../assets/Images/dominos.png'),
+    },
   ];
 
   const renderCategory = ({ item }) => (
-    <TouchableOpacity style={styles.categoryCard}>
+    <TouchableOpacity style={styles.categoryCard} onPress={() => navigation.navigate('ItemDetails', { item })}>
       <Image source={item.image} style={styles.categoryImage} />
       <Text style={styles.categoryTitle}>{item.title}</Text>
       <View style={styles.priceContainer}>
@@ -56,7 +65,7 @@ const HomeScreen = () => {
   );
 
   const renderRestaurant = ({ item }) => (
-    <TouchableOpacity style={styles.restaurantCard}>
+    <TouchableOpacity style={styles.restaurantCard}  onPress={() => navigation.navigate('Restaurant', { item })}>
       <Image source={item.image} style={styles.restaurantImage} />
       <Text style={styles.restaurantName}>{item.name}</Text>
       <Text style={styles.restaurantCategories}>{item.categories}</Text>
@@ -79,67 +88,70 @@ const HomeScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity>
-          <Image source={require('../../assets/Images/menu.png')} />
-        </TouchableOpacity>
-        <View style={styles.deliveryContainer}>
-          <Text style={styles.deliveryLabel}>DELIVER TO</Text>
-          <View style={styles.locationContainer}>
-            <Text style={styles.location}>Halal Lab office</Text>
-            <Image source={require('../../assets/Images/chevrondown.png')} />
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={styles.header}>
+          <TouchableOpacity>
+            <Image source={require('../../assets/Images/menu.png')} />
+          </TouchableOpacity>
+          <View style={styles.deliveryContainer}>
+            <Text style={styles.deliveryLabel}>DELIVER TO</Text>
+            <View style={styles.locationContainer}>
+              <Text style={styles.location}>Halal Lab office</Text>
+              <Image source={require('../../assets/Images/chevrondown.png')} />
+            </View>
           </View>
+          <TouchableOpacity style={styles.cartContainer} onPress={() => navigation.navigate('Cart')}>
+            <Image style={{ height: 30, width: 30 }} source={require('../../assets/Images/cart.png')} />
+            <View style={styles.badge}>
+              <Text style={styles.badgeText}>2</Text>
+            </View>
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.cartContainer}>
-          <Image style={{ height: 30, width: 30 }} source={require('../../assets/Images/cart.png')} />
-          <View style={styles.badge}>
-            <Text style={styles.badgeText}>2</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
 
-      <Text style={styles.greeting}>Hey Halal, Good Afternoon!</Text>
+        <Text style={styles.greeting}>Hey Halal, Good Afternoon!</Text>
 
-      <View style={styles.searchContainer}>
-        <Image source={require('../../assets/Images/Search.png')} />
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search dishes, restaurants"
-          placeholderTextColor="#666"
+        <View style={styles.searchContainer}>
+          <Image source={require('../../assets/Images/Search.png')} />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search dishes, restaurants"
+            placeholderTextColor="#666"
+          />
+        </View>
+
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>All Categories</Text>
+          <TouchableOpacity style={styles.seeAllButton}>
+            <Text style={styles.seeAllText}>See All</Text>
+            <Image source={require('../../assets/Images/chevronleft.png')} style={{ transform: [{ rotate: '180deg' }] }} />
+          </TouchableOpacity>
+        </View>
+
+        <FlatList
+          horizontal
+          data={categories}
+          renderItem={renderCategory}
+          keyExtractor={(item) => item.id}
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.categoriesList}
         />
-      </View>
 
-      <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>All Categories</Text>
-        <TouchableOpacity style={styles.seeAllButton}>
-          <Text style={styles.seeAllText}>See All</Text>
-          <Image source={require('../../assets/Images/chevronleft.png')} style={{ transform: [{ rotate: '180deg' }] }} />
-        </TouchableOpacity>
-      </View>
+        <View style={[styles.sectionHeader, { marginTop: 10 }]}>
+          <Text style={styles.sectionTitle}>Open Restaurants</Text>
+          <TouchableOpacity style={styles.seeAllButton}>
+            <Text style={styles.seeAllText}>See All</Text>
+            <Image source={require('../../assets/Images/chevronleft.png')} style={{ transform: [{ rotate: '180deg' }] }} />
+          </TouchableOpacity>
+        </View>
 
-      <FlatList
-        horizontal
-        data={categories}
-        renderItem={renderCategory}
-        keyExtractor={(item) => item.id}
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.categoriesList}
-      />
-
-      <View style={[styles.sectionHeader, { marginTop: 10 }]}>
-        <Text style={styles.sectionTitle}>Open Restaurants</Text>
-        <TouchableOpacity style={styles.seeAllButton}>
-          <Text style={styles.seeAllText}>See All</Text>
-          <Image source={require('../../assets/Images/chevronleft.png')} style={{ transform: [{ rotate: '180deg' }] }} />
-        </TouchableOpacity>
-      </View>
-
-      <FlatList
-        data={restaurants}
-        renderItem={renderRestaurant}
-        keyExtractor={(item) => item.id}
-        showsVerticalScrollIndicator={false}
-      />
+        <FlatList
+          scrollEnabled={false}
+          data={restaurants}
+          renderItem={renderRestaurant}
+          keyExtractor={(item) => item.id}
+          showsVerticalScrollIndicator={false}
+        />
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -176,6 +188,8 @@ const styles = StyleSheet.create({
   },
   cartContainer: {
     position: 'relative',
+    right: 8,
+    top: 5
   },
   badge: {
     position: 'absolute',

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ImageBackground, ScrollView } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 
 const LoginScreen = ({ navigation }) => {
@@ -33,9 +33,12 @@ const LoginScreen = ({ navigation }) => {
     };
 
     return (
+        <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
+            <ImageBackground source={require('../../assets/Images/backgroundimage.png')}>
             <Text style={styles.title}>Log In</Text>
             <Text style={styles.subtitle}>Please sign in to your existing account</Text>
+            </ImageBackground>
             <View style={{ flex: 1, padding: 20, backgroundColor: 'white', borderTopLeftRadius: 20, borderTopRightRadius: 20, marginTop: "8%" }}>
                 <Text style={{
                     fontFamily: 'Sen-Regular', marginBottom: 10
@@ -101,6 +104,7 @@ const LoginScreen = ({ navigation }) => {
                 </View>
             </View>
         </View>
+        </ScrollView>
     );
 };
 

@@ -7,11 +7,15 @@ import {
   SafeAreaView,
   TouchableOpacity,
   ScrollView,
+  FlatList,
+  Alert
 } from 'react-native';
+import { responsiveWidth } from '../utils/Normalize';
 
-const ItemDetailsScreen = () => {
+const ItemDetailsScreen = ({navigation, route}) => {
   const [quantity, setQuantity] = useState(2);
   const [selectedSize, setSelectedSize] = useState('14"');
+  const {item} = route.params;
 
   const sizes = ['10"', '14"', '16"'];
 
@@ -21,48 +25,75 @@ const ItemDetailsScreen = () => {
       setQuantity(prev => prev - 1);
     }
   };
+  const ingredientData = [
+    {
+      image: require('../../assets/Images/ingre1.png')
+    },
+    {
+      image: require('../../assets/Images/ingre2.png')
+    },
+    {
+      image: require('../../assets/Images/ingre3.png')
+    },
+    {
+      image: require('../../assets/Images/ingre4.png')
+    },
+    {
+      image: require('../../assets/Images/ingre5.png')
+    }
+  ]
+
+  const handleAddToCart = () => {
+    const cartItem = {
+      ...item,
+      quantity,
+      size: selectedSize,
+      totalPrice: 32 * quantity,
+    };
+    
+    navigation.navigate('Cart', { cartItem });
+    Alert.alert('Success', 'Item added to cart');
+  };
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
         <View style={styles.header}>
-          <TouchableOpacity style={styles.iconButton}>
-          <Image source={require('../../assets/Images/chevronleft.png')}  />
+          <TouchableOpacity style={styles.iconButton} onPress={() =>  navigation.pop()}>
+            <Image source={require('../../assets/Images/chevronleft.png')} />
           </TouchableOpacity>
           <TouchableOpacity style={styles.iconButton}>
-          <Image source={require('../../assets/Images/heart.png')}  />
-            {/* <AntDesign name="heart" size={24} color="#FF6B00" /> */}
+            <Image source={require('../../assets/Images/heart.png')} />
           </TouchableOpacity>
         </View>
 
-        {/* Product Image */}
         <View style={styles.imageContainer}>
           <Image
-            source={require('../../assets/Images/burger.jpeg')}
+            source={item.image}
             style={styles.productImage}
             resizeMode="contain"
           />
         </View>
 
         <View style={styles.infoContainer}>
-          <Text style={styles.title}>Burger Bistro</Text>
-          
+          <Text style={styles.title}>{item.title ?? ""}</Text>
+
           <View style={styles.restaurantRow}>
-            {/* <MaterialCommunityIcons name="food" size={20} color="#FF6B00" /> */}
+            <Image source={require('../../assets/Images/food.png')} />
             <Text style={styles.restaurantName}>Rose Garden</Text>
           </View>
 
           <View style={styles.statsRow}>
             <View style={styles.statItem}>
-            <Image source={require('../../assets/Images/Star.png')}  />
+              <Image source={require('../../assets/Images/Star.png')} />
               <Text style={styles.statText}>4.7</Text>
             </View>
             <View style={styles.statItem}>
-            <Image source={require('../../assets/Images/truck.png')} style={{ transform: [{ rotate: '180deg' }] }} />
+              <Image source={require('../../assets/Images/truck.png')} style={{ transform: [{ rotate: '180deg' }] }} />
               <Text style={styles.statText}>Free</Text>
             </View>
             <View style={styles.statItem}>
-            <Image source={require('../../assets/Images/clock.png')}  />
+              <Image source={require('../../assets/Images/clock.png')} />
               <Text style={styles.statText}>20 min</Text>
             </View>
           </View>
@@ -94,35 +125,42 @@ const ItemDetailsScreen = () => {
             </View>
           </View>
 
-          {/* Ingredients */}
           <View style={styles.ingredientsSection}>
             <Text style={styles.sectionTitle}>INGREDIENTS</Text>
             <View style={styles.ingredientsRow}>
-              {['salt', 'meat', 'spicy', 'lettuce', 'herbs'].map((item, index) => (
-                <View key={index} style={styles.ingredientIcon}>
-                  {/* <MaterialCommunityIcons name="food" size={24} color="#FF6B00" /> */}
-                </View>
-              ))}
+              <FlatList
+                data={ingredientData}
+                horizontal
+                renderItem={({ item, index }) => (
+                  <View key={index} style={styles.ingredientIcon}>
+                    <Image source={item.image} />
+                  </View>
+                )}
+                keyExtractor={(_, index) => index.toString()}
+              />
+
             </View>
           </View>
         </View>
       </ScrollView>
 
-      {/* Bottom Bar */}
       <View style={styles.bottomBar}>
-        <View style={styles.priceContainer}>
-          <Text style={styles.price}>$32</Text>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <View style={styles.priceContainer}>
+            <Text style={styles.price}>$32</Text>
+          </View>
+          <View style={styles.quantityContainer}>
+            <TouchableOpacity onPress={decreaseQuantity} style={styles.quantityButton}>
+              <Image source={require('../../assets/Images/Minus.png')} tintColor={"white"} />
+            </TouchableOpacity>
+            <Text style={styles.quantity}>{quantity}</Text>
+            <TouchableOpacity onPress={increaseQuantity} style={styles.quantityButton}>
+              <Image source={require('../../assets/Images/Plus.png')} tintColor={"white"}/>
+            </TouchableOpacity>
+          </View>
         </View>
-        <View style={styles.quantityContainer}>
-          <TouchableOpacity onPress={decreaseQuantity} style={styles.quantityButton}>
-          <Image source={require('../../assets/Images/Minus.png')}  />
-          </TouchableOpacity>
-          <Text style={styles.quantity}>{quantity}</Text>
-          <TouchableOpacity onPress={increaseQuantity} style={styles.quantityButton}>
-          <Image source={require('../../assets/Images/Plus.png')}  />
-          </TouchableOpacity>
-        </View>
-        <TouchableOpacity style={styles.addButton}>
+
+        <TouchableOpacity style={styles.addButton} onPress={handleAddToCart}>
           <Text style={styles.addButtonText}>ADD TO CART</Text>
         </TouchableOpacity>
       </View>
@@ -139,6 +177,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     padding: 16,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 1,
   },
   iconButton: {
     backgroundColor: '#FFF',
@@ -238,7 +281,7 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   bottomBar: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     padding: 16,
     backgroundColor: '#FFF',
     borderTopWidth: 1,
@@ -274,9 +317,10 @@ const styles = StyleSheet.create({
   },
   addButton: {
     backgroundColor: '#FF6B00',
-    paddingHorizontal: 24,
+    paddingHorizontal: responsiveWidth(30),
     paddingVertical: 12,
-    borderRadius: 25,
+    borderRadius: 12,
+    marginTop: 10
   },
   addButtonText: {
     color: '#FFF',

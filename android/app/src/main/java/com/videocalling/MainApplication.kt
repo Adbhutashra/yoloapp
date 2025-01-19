@@ -1,4 +1,4 @@
-package com.deliveryapp
+package com.yoloapp
 
 import android.app.Application
 import com.facebook.react.PackageList

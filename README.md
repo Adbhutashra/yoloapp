@@ -15,8 +15,8 @@ A React Native mobile application for food ordering with multiple screens and fe
 
 1. Clone the repository:
 
-git clone https://github.com/Adbhutashra/deliveryapp-reactnative.gi
-cd deliveryapp-reactnative
+git clone https://github.com/Adbhutashra/yoloapp.git
+cd yoloapp
 
 2. Install dependencies (using force due to potential version conflicts):
 

@@ -1,20 +1,16 @@
-// PaymentScreen.js
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Animated, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Animated, Image, Dimensions } from 'react-native';
 import { faker } from '@faker-js/faker';
-import { LinearGradient } from 'react-native-linear-gradient';
-// import Icon from 'react-native-vector-icons/Ionicons';
 
 const PaymentScreen = () => {
   const [isFrozen, setIsFrozen] = useState(false);
   const [selectedMode, setSelectedMode] = useState('card');
   const [cardDetails] = useState({
-    number: faker.finance.creditCardNumber('####-####-####-####'),
+    number: faker.finance.creditCardNumber('################'),
     expiry: '01/28',
     cvv: faker.finance.creditCardCVV(),
   });
 
-  // Animation value for card blur effect
   const blurAnimation = new Animated.Value(0);
 
   useEffect(() => {
@@ -26,14 +22,12 @@ const PaymentScreen = () => {
   }, [isFrozen]);
 
   const toggleFreeze = () => {
-    console.log("check")
     setIsFrozen(!isFrozen);
   };
 
   const renderCard = () => (
     <Animated.View
       style={[
-        styles.card,
         {
           opacity: blurAnimation.interpolate({
             inputRange: [0, 1],
@@ -42,46 +36,46 @@ const PaymentScreen = () => {
         },
       ]}
     >
-      {!isFrozen ? (
+      {isFrozen ? (
         <>
-          <View style={styles.cardHeader}>
-            <Text style={styles.cardBrand}>YOLO</Text>
-            <Text style={styles.bankName}>YES BANK</Text>
-          </View>
-          <Text style={styles.cardNumber}>{cardDetails.number}</Text>
-          <View style={styles.cardFooter}>
-            <View>
-              <Text style={styles.cardLabel}>expiry</Text>
-              <Text style={styles.cardExpiry}>{cardDetails.expiry}</Text>
+          <View style={{ position: 'relative' }}>
+            <View style={[{ position: 'absolute', zIndex: 1, top: 83, left: 18 }]}>
+              {cardDetails.number.match(/.{1,4}/g).map((group, index) => (
+                <Text key={index} style={[styles.cardNumber]}>
+                  {group}
+                </Text>
+              ))}
             </View>
-            <View>
-              <Text style={styles.cardLabel}>cvv</Text>
-              <Text style={styles.cardCvv}>***</Text>
+            <View style={[{ position: 'absolute', zIndex: 1, top: 83, right: 120 }]}>
+              <View>
+                <Text style={styles.cardLabel}>expiry</Text>
+                <Text style={styles.cardExpiry}>{cardDetails.expiry}</Text>
+              </View>
+              <View style={{ marginTop: 15, flexDirection: 'row' }}>
+                <View>
+                  <Text style={styles.cardLabel}>cvv</Text>
+                  <Text style={styles.cardCvv}>***</Text>
+                </View>
+                <Image
+                  source={require('./assets/eye.png')}
+                  style={{ height: 30, left: 10, top: 20 }}
+                />
+              </View>
             </View>
-          </View>
-          <View style={styles.cardActions}>
-            <TouchableOpacity style={styles.copyButton}>
-              {/* <Icon name="copy-outline" size={20} color="#ff3b30" /> */}
+            <View style={[{ position: 'absolute', zIndex: 1, bottom: 113, left: 30 }]}>
               <Text style={styles.copyText}>copy details</Text>
-            </TouchableOpacity>
-            {/* <Image
-              source={require('./assets/rupayLogo.png')}
-              style={styles.rupayLogo}
-            /> */}
+            </View>
+            <Image
+              source={require('./assets/unfreezecard.png')}
+              style={{ height: 350, right: 18 }}
+            />
           </View>
         </>
       ) : (
-          <Image
-              source={require('./assets/unfreezecard.png')}
-              style={{height: 300 , width: 200}}
-            /> 
-        // <LinearGradient
-        //   colors={['#1a1a1a', '#2a2a2a']}
-        //   style={styles.frozenCardContent}
-        //   start={{ x: 0, y: 0 }}
-        //   end={{ x: 1, y: 1 }}
-        // >
-        // </LinearGradient>
+        <Image
+          source={require('./assets/freezecard.png')}
+          style={{ height: 350, right: 18 }}
+        />
       )}
     </Animated.View>
   );
@@ -92,67 +86,71 @@ const PaymentScreen = () => {
       <Text style={styles.subtitle}>
         choose your preferred payment method to make payment.
       </Text>
-
       <View style={styles.toggleContainer}>
         <TouchableOpacity
           style={[
-            styles.toggleButton, { borderColor: 'white', borderWidth: 1}
+            styles.toggleButton, { borderColor: 'white', borderWidth: 1 }
           ]}
           onPress={() => setSelectedMode('pay')}
         >
-          <Text style={[styles.toggleButtonText, {  color: '#fff'}]}>pay</Text>
+          <Text style={[styles.toggleButtonText, { color: '#fff' }]}>pay</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[
-            styles.toggleButton,{ borderColor: 'red', borderWidth: 1}
+            styles.toggleButton, { borderColor: 'red', borderWidth: 1 }
           ]}
           onPress={() => setSelectedMode('card')}
         >
-          <Text style={[styles.toggleButtonText, {  color: 'red'}]}>card</Text>
+          <Text style={[styles.toggleButtonText, { color: 'red' }]}>card</Text>
         </TouchableOpacity>
       </View>
 
       <Text style={styles.cardTypeText}>YOUR DIGITAL DEBIT CARD</Text>
-      {renderCard()}
+      <View style={{ flexDirection: 'row' }}>
+        {renderCard()}
+        <TouchableOpacity
+          style={styles.freezeButton}
+          onPress={() => toggleFreeze()}
+        >
+          <View style={{ height: 50, width: 50, borderRadius: 40, borderColor: !isFrozen ? '#ff3b30' : 'white', borderWidth: 0.3, justifyContent: 'center', alignItems: 'center' }}>
+            <Image
+              source={require('./assets/snow.png')}
+              style={{ height: 20, width: 20, tintColor: !isFrozen ? '#ff3b30' : 'white' }}
+            />
+          </View>
+          <Text style={[styles.freezeText, { color: !isFrozen ? '#ff3b30' : 'white' }]}>
+            {!isFrozen ? 'unfreeze' : 'freeze'}
+          </Text>
+        </TouchableOpacity>
+      </View>
 
-      <TouchableOpacity
-        style={styles.freezeButton}
-        onPress={() => toggleFreeze()}
-      >
-         <Image
-              source={require('./assets/snow.png')} 
-              style={{height: 20 , width: 20, tintColor :!isFrozen && 'red' }}
-            /> 
-        {/* <Icon
-          name={isFrozen ? 'snow-outline' : 'snow'}
-          size={24}
-          color="#ff3b30"
-        /> */}
-        <Text style={styles.freezeText}>
-          {isFrozen ? 'unfreeze' : 'freeze'}
-        </Text>
-      </TouchableOpacity>
-
+      <Image source={require('./assets/curve.png')} style={{top: 30}}/>
       <View style={styles.bottomNav}>
-        <TouchableOpacity style={styles.navItem}>
-        <Image
-              source={require('./assets/home.png')} 
-              style={{height: 20 , width: 20,}}
-            /> 
+        <TouchableOpacity style={[styles.navItem, { marginTop: 10 }]}>
+          <View style={{ height: 40, width: 40, borderRadius: 40, borderColor: 'white', borderWidth: 0.3, justifyContent: 'center', alignItems: 'center' }}>
+            <Image
+              source={require('./assets/home.png')}
+              style={{ height: 20, width: 20, }}
+            />
+          </View>
           <Text style={styles.navText}>home</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-        <Image
-              source={require('./assets/yolopay.png')} 
-              style={{height: 20 , width: 20,}}
-            /> 
+        <TouchableOpacity style={[styles.navItem,]}>
+          <View style={{ height: 50, width: 50, borderRadius: 40, borderColor: 'white', borderWidth: 0.7, justifyContent: 'center', alignItems: 'center', }}>
+            <Image
+              source={require('./assets/yolopay.png')}
+              style={{ height: 20, width: 20, }}
+            />
+          </View>
           <Text style={styles.navText}>yolo pay</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-        <Image
-              source={require('./assets/ginie.png')} 
-              style={{height: 20 , width: 20,}}
-            /> 
+        <TouchableOpacity style={[styles.navItem, { marginTop: 10 }]}>
+          <View style={{ height: 40, width: 40, borderRadius: 40, borderColor: 'white', borderWidth: 0.3, justifyContent: 'center', alignItems: 'center' }}>
+            <Image
+              source={require('./assets/ginie.png')}
+              style={{ height: 20, width: 20, }}
+            />
+          </View>
           <Text style={styles.navText}>ginie</Text>
         </TouchableOpacity>
       </View>
@@ -194,7 +192,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ff3b30',
   },
   toggleButtonText: {
-  
+
     fontWeight: '500',
   },
   cardTypeText: {
@@ -226,27 +224,21 @@ const styles = StyleSheet.create({
   },
   cardNumber: {
     color: '#fff',
-    fontSize: 22,
+    fontSize: 18,
     letterSpacing: 2,
-    marginBottom: 30,
-  },
-  cardFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 20,
+    marginBottom: 2,
   },
   cardLabel: {
     color: '#666',
-    fontSize: 12,
-    marginBottom: 4,
+    fontSize: 14,
   },
   cardExpiry: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 18,
   },
   cardCvv: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 26,
   },
   cardActions: {
     flexDirection: 'row',
@@ -272,23 +264,22 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   freezeButton: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 20,
+    right: 70, bottom: 80
   },
   freezeText: {
-    color: '#ff3b30',
-    marginLeft: 8,
+    marginTop: 10
   },
   bottomNav: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    backgroundColor: '#1a1a1a',
     borderRadius: 30,
     padding: 15,
     position: 'absolute',
-    bottom: 20,
+    bottom: 5,
     left: 20,
     right: 20,
   },

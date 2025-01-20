@@ -2,6 +2,11 @@
 
 A React Native mobile application for food ordering with multiple screens and features.
 
+## Screenshots
+
+![Alt text](./assets/screenshot1.png?raw=true)
+![Alt text](./assets/screenshot2.png?raw=true)
+
 ## Features
 
 - **Login Screen**: User authentication interface
